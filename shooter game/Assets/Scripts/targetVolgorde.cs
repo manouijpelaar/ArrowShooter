@@ -1,77 +1,65 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class targetVolgorde : MonoBehaviour
+public class TargetVolgorde : MonoBehaviour
 {
-    public bool inputTarget1;
-    public bool inputTarget2;
-    public bool inputTarget3;
-    public GameObject ItSelf;
-    public GameObject Target1;
-    public GameObject Target2;
-    public GameObject Target3;
+    public float speed;
+    public Transform endPosition;
+    public Animator gate;
 
-    // Start is called before the first frame update
-    void Start()
-    {   // target 1 aan de beurt en reset staat uit, reset voor 2 en 3 aan
-        Target1.GetComponent<TargetCollide>().Volgorde = true;
-        Target1.GetComponent<TargetCollide>().Reset = false;
-        Target2.GetComponent<TargetCollide>().Reset = true;
-        Target3.GetComponent<TargetCollide>().Reset = true;
+    public TargetCollide[] targetArray;
+    private int nextTarget = 0;
 
-        if (Target2.GetComponent<TargetCollide>().Hit == true && Target2.GetComponent<TargetCollide>().Volgorde == false || Target3.GetComponent<TargetCollide>().Hit == true && Target3.GetComponent<TargetCollide>().Volgorde == false)
-        {
-            Restart();
-        }
+    public bool doorIsOpen = false;
+    
+    public void Start()
+    {
+        
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    // checking de volgorde van de targets
+    public bool CheckTarget(TargetCollide target)
     {
-        // als target 1 is geraakt, is target 2 aan de beurt en reset voor target 1 en 3 aan
-        if (Target1.GetComponent<TargetCollide>().Hit == true)
-        {
-            Target2.GetComponent<TargetCollide>().Volgorde = true;
-            Target1.GetComponent<TargetCollide>().Hit = false; // zorgt ervoor dat er niet ongewild een restart plaatsvind
-            Target1.GetComponent<TargetCollide>().Volgorde = false;
-            Target1.GetComponent<TargetCollide>().Reset = true;
-            Target2.GetComponent<TargetCollide>().Reset = false;
+        if (doorIsOpen) { return false; }
 
-            if (Target1.GetComponent<TargetCollide>().Hit == true && Target1.GetComponent<TargetCollide>().Volgorde == false || Target3.GetComponent<TargetCollide>().Hit == true && Target3.GetComponent<TargetCollide>().Volgorde == false)
-            {
-                Restart();
-            }
+        Debug.Log("Checking Target");
+        if (targetArray[nextTarget] == target)
+        {
+            Debug.Log("Target Correct");
+            nextTarget++;
+
+            return true;
         }
 
-        // als target 1 en 2 zijn geraakt, is target 3 aan de beurt en reset voor target 1 en 2 aan
-        //Target1.GetComponent<TargetCollide>().Hit == true
-        if (Target2.GetComponent<TargetCollide>().Hit == true)
+        else
         {
-            Target3.GetComponent<TargetCollide>().Volgorde = true;
-            Target2.GetComponent<TargetCollide>().Hit = false; // zorgt ervoor dat er niet ongewild een restart plaatsvind
-            Target2.GetComponent<TargetCollide>().Volgorde = false;
-            Target2.GetComponent<TargetCollide>().Reset = true;
-            Target3.GetComponent<TargetCollide>().Reset = false;
+            //verkeerde volgorde word de list gereset
+            Debug.Log("Target InCorrect Resetting");
+            Reset();
+            return false;
+        }
+    } 
 
-            if (Target1.GetComponent<TargetCollide>().Hit == true && Target1.GetComponent<TargetCollide>().Volgorde == false || Target2.GetComponent<TargetCollide>().Hit == true && Target2.GetComponent<TargetCollide>().Volgorde == false)
+    // checked het lijstje voor volgorde
+    public bool CheckWin()
+    {
+        foreach (TargetCollide t in targetArray)
+        {
+            if (t.Hit == false)
             {
-                Restart();
+                return false;
             }
         }
-
+    return true;
     }
-    void Restart()
+
+    // checked het lijstje voor de volgorde
+    public void Reset()
     {
-        Target1.GetComponent<TargetCollide>().Hit = false;
-        Target2.GetComponent<TargetCollide>().Hit = false;
-        Target3.GetComponent<TargetCollide>().Hit = false;
-
-        Target1.GetComponent<TargetCollide>().Volgorde = true;
-        Target2.GetComponent<TargetCollide>().Volgorde = false;
-        Target3.GetComponent<TargetCollide>().Volgorde = false;
-
-        Target1.GetComponent<TargetCollide>().Reset = false;
-        Target2.GetComponent<TargetCollide>().Reset = true;
-        Target3.GetComponent<TargetCollide>().Reset = true;
+        foreach (TargetCollide t in targetArray)
+        {
+            t.Reset();
+        }
+        nextTarget = 0;        
     }
 }

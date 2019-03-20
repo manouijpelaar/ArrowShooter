@@ -5,8 +5,10 @@ public class camMouseLook : MonoBehaviour {
 
     Vector2 mouseLook;
     Vector2 smoothV;
-    public float sensitivity = 5.0f;
+    public float sensitivity = 4.0f;
     public float smoothness = 2.0f;
+    public float minAngle = -40.0f;
+    public float maxAngle = 60.0f;
 
     GameObject player;
 
@@ -24,6 +26,8 @@ public class camMouseLook : MonoBehaviour {
         mouseLook += smoothV;
 
         transform.localRotation = Quaternion.AngleAxis(-mouseLook.y, Vector3.right);
+        mouseLook.y = Mathf.Clamp(mouseLook.y, minAngle, maxAngle);
         player.transform.localRotation = Quaternion.AngleAxis(mouseLook.x, player.transform.up);
+
     }
 }
