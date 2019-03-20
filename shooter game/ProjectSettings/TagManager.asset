@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - arrow
+  - gate
+  - particle
+  - player
+  - riddle
   layers:
   - Default
   - TransparentFX
